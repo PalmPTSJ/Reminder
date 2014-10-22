@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Hello Title !!!</title>
+        <title>Hello Title 2 !!!</title>
         <meta charset="utf-8" />
         <link type="text/css" href="res/global.css" rel="stylesheet">
         <style>
@@ -11,7 +11,6 @@
             body {
                 background-color:#FF6472;
                 text-align:center;
-                overflow:hidden;
             }
             #headTxt {
                 font-size:5em;
@@ -166,14 +165,15 @@
             <table>
                 <tr>
                     <td>Username</td>
-                    <td> <input type="text"> </td>
+                    <td> <input type="text" id="login_username"> </td>
                 </tr>
                 <tr>
                     <td>Password</td>
-                    <td> <input type="password"> </td>
+                    <td> <input type="password" id="login_password"> </td>
                 </tr>
             </table>
             <div class="buttonRow">
+                <div class="button" onclick="login()">Real Login is here !!!</div>
                 <div class="button" onclick="startPokemon()">Login to super awesome website</div>
             </div>
             -or-
@@ -188,19 +188,19 @@
             <table>
                 <tr>
                     <td>Username</td>
-                    <td> <input type="text"> </td>
+                    <td> <input type="text" id="regis_username"> </td>
                 </tr>
                 <tr>
                     <td>Password</td>
-                    <td> <input type="password"> </td>
+                    <td> <input type="password" id="regis_password"> </td>
                 </tr>
                 <tr>
                     <td>Confirm</td>
-                    <td> <input type="password"> </td>
+                    <td> <input type="password" id="regis_passwordCon"> </td>
                 </tr>
             </table>
             <div class="buttonRow">
-                <div class="button">Register to the amazing website</div>
+                <div class="button" onclick="register()">Register to the amazing website</div>
             </div>
         </div>
         <div id="pokemonArea" class="hidden">
@@ -448,5 +448,28 @@
             }
         }
         preloadImage();
+        
+        function login()
+        {
+            var username = elem("login_username").value;
+            var password = elem("login_password").value;
+            $.get('php/login.php',{user:username, pass:password, t:$.now() },loginResp,"json");
+        }
+        function loginResp(resp)
+        {
+            console.log("LOGIN STAT : "+resp["stat"]);
+        }
+        function register()
+        {
+            var username = elem("regis_username").value;
+            var password = elem("regis_password").value;
+            var cpass = elem("regis_passwordCon").value;
+            if(cpass != password) alert("Password confirmation is not correct");
+            else $.post('php/regis.php',{user:username, pass:password, t:$.now() },regisResp,"json");
+        }
+        function regisResp(resp)
+        {
+            console.log("REGIS STAT : "+resp["stat"]);
+        }
     </script>
 </html>
