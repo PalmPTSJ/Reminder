@@ -34,7 +34,7 @@
         </div>
         <br>
         2. Preload form <div id="preloadBtn"></div>
-        <form id="preloadArea" style='border:1px solid red; height:120px; width:49%; display:inline-block; vertical-align: top;'>
+        <form id="preloadArea" method="post" enctype="multipart/form-data" style='border:1px solid red; height:120px; width:49%; display:inline-block; vertical-align: top;'>
             
         </form>
         <div id="preloadInfo" style="border:1px solid blue; height:120px; width:49%; display:inline-block;">
@@ -123,8 +123,9 @@
         function submitForm()
         {
             var url = elem("targfile").value;
-            elem("preloadArea").target = url;
+            elem("preloadArea").setAttribute("action",url);
             elem("preloadArea").submit();
+            updateLog("[FORM submitted] as FORM POST");
         }
         function dataDone(resp)
         {
