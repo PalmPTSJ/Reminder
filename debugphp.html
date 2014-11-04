@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>DEBUG</title>
+        <script src="jquery.js"></script>
+        <style>
+            #callback {
+                width:95%;
+                border:5px solid green;
+                height:250px;
+            }
+            .submitBtn {
+                width:100%;
+                background-color:#BBEEDD;
+                padding-top:6px;
+                padding-bottom:6px;
+                margin-top:10px;
+                margin-bottom:10px;
+                font-size:50px;
+                text-align:center;
+                color:white;
+                cursor:pointer;
+            }
+        </style>
+    </head>
+    <body>
+        !!!!!!!!! Target php <input type="text" id="targfile" placeholder="php/test.php"><br>
+        1. Raw data <br><textarea id="rawData" style="width:50%; height:120px;"></textarea><br>
+        <div class="submitBtn" style="width:49%; display:inline-block;" onclick='submitGet()'>
+            GET
+        </div>
+        <div class="submitBtn" style="background-color:#EEDDBB; width:49%; display:inline-block;" onclick='submitPost()'>
+            POST
+        </div>
+        <br>
+        2. Preload form <div id="preloadBtn"></div>
+        <form id="preloadArea" style='border:1px solid red; height:120px; width:49%; display:inline-block; vertical-align: top;'>
+            
+        </form>
+        <div id="preloadInfo" style="border:1px solid blue; height:120px; width:49%; display:inline-block;">
+            
+        </div>
+        <div class="submitBtn" onclick='submitForm()'>
+            SUBMIT FORM (POST)
+        </div>
+        <textarea id="callback" readonly>---------- CONSOLE LOG -------------</textarea>
+    </body>
+    <script>
+        var preloadName = ["Login","Login w/o mask","Register","Submit file","File with desc"];
+        var preloadHTML = [
+        "Username : <input type='text' name='user'><br> "+
+        "Password : <input type='password' name='pass'>",
+        
+        "Username : <input type='text' name='user'><br> "+
+        "Password : <input type='text' name='pass'>",
+        
+        "Username : <input type='text' name='user'><br> "+
+        "Password : <input type='text' name='pass'><br> "+
+        "Inf 1 : <input type='text' name='inf1'><br> "+
+        "Inf 2 : <input type='text' name='inf2'>",
+        
+        "File : <input type='file' name='file'>",
+        
+        "File : <input type='file' name='file'><br>" +
+        "Desc : <input type='text' name='desc'>"];
+        initPreload();
+        preload(0);
+        function elem(id) { return document.getElementById(id); }
+        function initPreload()
+        {
+            var inHTML = "";
+            for(var i = 0;i < preloadName.length;i++) {
+                inHTML += "<input type='button' value='"+preloadName[i]+"' onclick='preload("+i+")'>";
+            }
+            elem("preloadBtn").innerHTML = inHTML;
+        }
+        function preload(id)
+        {
+            elem("preloadArea").innerHTML = preloadHTML[id];
+            elem("preloadInfo").textContent = "";
+            var info = preloadHTML[id].split("<br>");
+            for(var i = 0;i < info.length;i++) {
+                elem('preloadInfo').innerHTML += info[i].substring(info[i].search("<input")+1,info[i].length-1) + "<br>";
+            }
+        }
+        var startTime = $.now();
+        function updateLog(txt)
+        {
+            var oldText = elem("callback").innerHTML;
+            elem("callback").innerHTML = ($.now-startTime)+" "+txt + "<br>" + oldTxt;
+        }
+        function submitGet()
+        {
+            var toSend = elem("rawData").textContent;
+            var url = elem("targfile").value;
+            $.get(url,JSON.parse(toSend),dataDone);
+        }
+        function submitPost()
+        {
+            var toSend = elem("rawData").textContent;
+            var url = elem("targfile").value;
+            $.post(url,JSON.parse(toSend),dataDone);
+        }
+        function submitForm()
+        {
+            elem("preloadArea").submit();
+            updateLog("[FORM submitted]");
+        }
+        function dataDone(resp)
+        {
+            updateLog("[AJAX recieved] : "+resp);
+        }
+    </script>
+</html>
