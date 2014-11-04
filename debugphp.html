@@ -40,8 +40,11 @@
         <div id="preloadInfo" style="border:1px solid blue; height:120px; width:49%; display:inline-block;">
             
         </div>
-        <div class="submitBtn" onclick='submitForm()'>
-            SUBMIT FORM (POST)
+        <div class="submitBtn" style="width:49%; display:inline-block;" onclick='submitFormAjax()'>
+            AJAX
+        </div>
+        <div class="submitBtn" style="background-color:#EEDDBB; width:49%; display:inline-block;" onclick='submitForm()'>
+            FORM POST (file upload)
         </div>
         <textarea id="callback" readonly>---------- CONSOLE LOG -------------</textarea>
     </body>
@@ -86,25 +89,42 @@
         var startTime = $.now();
         function updateLog(txt)
         {
-            var oldText = elem("callback").innerHTML;
-            elem("callback").innerHTML = ($.now-startTime)+" "+txt + "<br>" + oldTxt;
+            var oldText = elem("callback").value;
+            elem("callback").value = (($.now()-startTime) / 1000)+" "+txt + "\n" + oldText;
         }
         function submitGet()
         {
-            var toSend = elem("rawData").textContent;
+            var toSend = "{"+elem("rawData").value+"}";
             var url = elem("targfile").value;
             $.get(url,JSON.parse(toSend),dataDone);
+            updateLog("[GET submitted] : "+toSend);
         }
         function submitPost()
         {
-            var toSend = elem("rawData").textContent;
+            var toSend = "{"+elem("rawData").value+"}";
             var url = elem("targfile").value;
             $.post(url,JSON.parse(toSend),dataDone);
+            updateLog("[POST submitted] : "+toSend);
+        }
+        function submitFormAjax()
+        {
+            var targDiv = elem("preloadArea");
+            var url = elem("targfile").value;
+            var allInput = targDiv.getElementsByTagName("input");
+            var toSend = "{";
+            for(var i = 0;i < allInput.length;i++) {
+                toSend += ('"'+allInput[i].name+'": "'+allInput[i].value+'"');
+                if(i != allInput.length-1) toSend += ',';
+            }
+            toSend += "}";
+            $.post(url,JSON.parse(toSend),dataDone);
+            updateLog("[FORM submitted] : "+toSend);
         }
         function submitForm()
         {
+            var url = elem("targfile").value;
+            elem("preloadArea").target = url;
             elem("preloadArea").submit();
-            updateLog("[FORM submitted]");
         }
         function dataDone(resp)
         {
